@@ -26,3 +26,5 @@ tools/
 *.njsproj
 *.sln
 *.sw?
+tsconfig.app.tsbuildinfo
+.vite/

@@ -1,36 +1,31 @@
 import { defineStore } from 'pinia'
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch } from 'vue'
 import i18n, { type Locale } from '@/i18n'
 
 type Theme = 'light' | 'dark'
 
 export const useSettingsStore = defineStore('settings', () => {
-  const locale = ref<Locale>('zh-CN')
-  const theme = ref<Theme>('light')
+  const savedLocale = (localStorage.getItem('locale') as Locale) || 'zh-CN'
+  const savedTheme = (localStorage.getItem('theme') as Theme) || 'light'
 
-  onMounted(() => {
-    locale.value = (localStorage.getItem('locale') as Locale) || 'zh-CN'
-    theme.value = (localStorage.getItem('theme') as Theme) || 'light'
-    i18n.global.locale.value = locale.value
-    applyTheme(theme.value)
-  })
+  const locale = ref<Locale>(savedLocale)
+  const theme = ref<Theme>(savedTheme)
+
+  i18n.global.locale.value = savedLocale
+  document.documentElement.setAttribute('data-theme', savedTheme)
 
   watch(locale, (val) => {
     localStorage.setItem('locale', val)
+    i18n.global.locale.value = val
   })
 
   watch(theme, (val) => {
     localStorage.setItem('theme', val)
-    applyTheme(val)
+    document.documentElement.setAttribute('data-theme', val)
   })
-
-  function applyTheme(value: Theme) {
-    document.documentElement.setAttribute('data-theme', value)
-  }
 
   function setLocale(value: Locale) {
     locale.value = value
-    i18n.global.locale.value = value
   }
 
   function toggleTheme() {
