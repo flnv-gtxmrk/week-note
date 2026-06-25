@@ -1,0 +1,51 @@
+:root {
+  --primary: #6366f1;
+  --primary-light: #818cf8;
+  --primary-dark: #4f46e5;
+  --accent: #f59e0b;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --text: #1f2937;
+  --text-secondary: #6b7280;
+  --bg: #f8fafc;
+  --bg-soft: #f1f5f9;
+  --bg-card: rgba(255, 255, 255, 0.85);
+  --border: #e2e8f0;
+  --shadow: 0 8px 32px rgba(31, 41, 55, 0.08);
+  --radius: 16px;
+  --radius-sm: 8px;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+[data-theme='dark'] {
+  --text: #f8fafc;
+  --text-secondary: #94a3b8;
+  --bg: #0f172a;
+  --bg-soft: #1e293b;
+  --bg-card: rgba(30, 41, 59, 0.85);
+  --border: #334155;
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+}
+
+$primary: var(--primary);
+$accent: var(--accent);
+$success: var(--success);
+$text: var(--text);
+$text-secondary: var(--text-secondary);
+$bg: var(--bg);
+$bg-soft: var(--bg-soft);
+$bg-card: var(--bg-card);
+$border: var(--border);
+$shadow: var(--shadow);
+$radius: var(--radius);
+$radius-sm: var(--radius-sm);
+$font: var(--font);
+
+@mixin glass-card {
+  background: $bg-card;
+  backdrop-filter: blur(12px);
+  border: 1px solid $border;
+  border-radius: $radius;
+  box-shadow: $shadow;
+}
