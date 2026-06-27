@@ -1,110 +1,121 @@
-# 周报助手（Week Report Writer）
+# Report Writer
 
-一个基于 **Vue 3 + Java + TeaVM** 的周报撰写小网站，可部署在 GitHub Pages 上。
+Daily · Weekly · Monthly — one click away.
 
-## 核心功能
+A lightweight report writing tool built with **Vue 3 + Java (TeaVM)**, deployed on GitHub Pages.
 
-- 输入每周工作内容，自动拆解生成结构化周报
-- 多种模板可选：标准周报、STAR 法、极简版、管理者视角，支持自定义模板
-- 一键复制全文，导出 `.txt` / `.md` / `.html`
-- 历史记录保存（IndexedDB），支持搜索和重新加载
-- 周报质量评分、关键词云、数据看板
-- 中英双语切换、深色/浅色主题
-- 高级视觉动效（粒子背景、页面动画、卡片悬浮）
+## Features
 
-## 技术栈
+### Core
 
-- **前端**：Vue 3 + Vite + TypeScript + Element Plus + Pinia + Vue I18n
-- **Java 运行方式**：TeaVM 将 Java 核心逻辑编译为 JavaScript，在浏览器中运行
-- **数据存储**：IndexedDB（Dexie.js）
-- **图表**：ECharts + echarts-wordcloud
-- **部署**：GitHub Actions → GitHub Pages
+- **Daily / Weekly / Monthly Reports** — switch report type with one click
+- **Smart Decomposition** — automatically parse work items into structured sections
+- **12 Built-in Templates** — covering all report types with multiple styles
+- **Custom Templates** — create your own with a step-by-step editor
+- **Quality Scoring** — real-time report quality analysis
+- **Keyword Extraction** — auto-extract key terms from input
+- **History Management** — save, search, filter, and reload past reports
+- **Data Dashboard** — trend charts, type distribution, keyword cloud
+- **Multi-format Export** — TXT, Markdown, HTML
+- **Bilingual** — Chinese / English, switch instantly
+- **Dark / Light Theme** — eye-friendly in any environment
 
-## 本地开发
+### Templates
 
-### 环境要求
+| Type | Templates |
+|------|-----------|
+| Daily | Standard Daily, Quick Daily, Learning Daily |
+| Weekly | Standard Weekly, STAR Method, Minimalist, Manager View, OKR Review, Sprint Retro |
+| Monthly | Standard Monthly, Monthly OKR, Growth Monthly |
 
-- Node.js 20+
-- Java 17+
-- Maven 3.9+
+## Tech Stack
 
-### 安装依赖
+| Layer | Technology |
+|-------|-----------|
+| Frontend | Vue 3 + Vite + TypeScript |
+| UI | Element Plus + Custom SCSS (EduWay style) |
+| State | Pinia |
+| i18n | Vue I18n |
+| Charts | ECharts + echarts-wordcloud |
+| Animation | GSAP |
+| Storage | localStorage |
+| Java Engine | TeaVM (compiled to JavaScript) |
+| Deploy | GitHub Actions → GitHub Pages |
+
+## Quick Start
 
 ```bash
+# Install dependencies
 npm install
+
+# Start dev server
+npm run dev
+
+# Build for production
+npm run build
 ```
 
-### 编译 Java 核心
+## Project Structure
+
+```
+src/
+├── components/
+│   ├── common/          # NavBar, LangSwitch
+│   └── editor/          # WorkInput, TemplateSelector, ReportPreview, ActionToolbar
+├── composables/         # useWasmEngine (Java bridge + JS fallback)
+├── i18n/                # zh-CN, en-US
+├── stores/              # reportStore, templateStore, historyStore, settingsStore
+├── styles/              # variables, global, animations
+├── types/               # TypeScript interfaces
+├── views/               # Home, Write, History, Dashboard, Templates, Settings
+├── App.vue
+└── main.ts
+java-core/               # Java business logic (TeaVM compilation)
+├── pom.xml
+└── src/main/java/com/weekreport/
+    ├── core/            # ReportEngine, TemplateParser, QualityScorer
+    ├── parser/          # WorkItemParser, KeywordExtractor
+    └── wasm/            # ExportedApi (JSO bridge)
+```
+
+## Deployment
+
+### GitHub Pages
+
+1. Push code to `main` branch
+2. Go to **Settings → Pages → Source: GitHub Actions**
+3. GitHub Actions auto-builds and deploys
+
+### Custom Domain
+
+1. Add your domain to `public/CNAME`
+2. Configure DNS A records pointing to GitHub Pages IPs
+3. Update `base` in `vite.config.ts` to `'/'`
+
+## Development
+
+### Prerequisites
+
+- Node.js 18+
+- Java 17+ (for TeaVM compilation)
+- Maven 3.9+
+
+### Build Java Engine
 
 ```bash
 cd java-core
 mvn clean package -DskipTests
 cp target/javascript/classes.js ../public/week-report-core.js
-cd ..
 ```
 
-### 启动开发服务器
+### Local Development
 
 ```bash
 npm run dev
 ```
 
-### 构建生产版本
+The app runs at `http://localhost:5173/week-note/`
 
-```bash
-npm run build
-```
-
-## 部署到 GitHub Pages
-
-1. 将代码推送到 GitHub 仓库的 `main` 分支
-2. 在仓库 Settings → Pages 中，Source 选择 "GitHub Actions"
-3. GitHub Actions 会自动构建并部署
-4. 如需绑定自定义域名，在仓库 Settings → Pages 中配置，并在 `public/CNAME` 文件中写入域名
-
-## 项目结构
-
-```
-.
-├── java-core/                  # Java 业务逻辑（TeaVM 编译）
-│   ├── pom.xml
-│   └── src/main/java/com/weekreport/
-│       ├── core/               # 报告引擎、模板解析、质量评分
-│       ├── parser/             # 文本解析、关键词提取
-│       ├── wasm/               # JSO 导出入口
-│       └── model/              # 数据模型
-├── public/                     # 静态资源
-│   └── week-report-core.js     # TeaVM 编译产物
-├── src/
-│   ├── components/             # Vue 组件
-│   ├── composables/            # 组合式函数
-│   ├── stores/                 # Pinia 状态管理
-│   ├── i18n/                   # 中英语言包
-│   ├── router/                 # 路由配置
-│   ├── types/                  # TypeScript 类型
-│   ├── views/                  # 页面视图
-│   ├── App.vue
-│   └── main.ts
-├── .github/workflows/deploy.yml # GitHub Actions 部署配置
-├── index.html
-├── package.json
-├── vite.config.ts
-└── README.md
-```
-
-## 自定义模板格式
-
-自定义模板包含以下字段：
-
-- `name` / `nameZh`：模板名称（英文/中文）
-- `description` / `descriptionZh`：模板描述
-- `sections`：段落数组，每个段落包含：
-  - `key`：标识符
-  - `title` / `titleZh`：段落标题
-  - `prompt` / `promptZh`：拆解提示
-  - `required`：是否必填
-  - `order`：排序
-
-## 许可证
+## License
 
 MIT
