@@ -1,134 +1,194 @@
 <script setup lang="ts">
+import { ref } from 'vue'
+import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useSettingsStore } from '@/stores/settingsStore'
 import LangSwitch from './LangSwitch.vue'
 
 const { t } = useI18n()
 const settings = useSettingsStore()
+const route = useRoute()
+const sidebarOpen = ref(false)
 
 const navItems = [
-  { name: 'home', path: '/' },
-  { name: 'write', path: '/write' },
-  { name: 'history', path: '/history' },
-  { name: 'dashboard', path: '/dashboard' },
-  { name: 'templates', path: '/templates' }
+  { name: 'home', path: '/', icon: '🏠' },
+  { name: 'write', path: '/write', icon: '📝' },
+  { name: 'history', path: '/history', icon: '📋' },
+  { name: 'dashboard', path: '/dashboard', icon: '📊' },
+  { name: 'templates', path: '/templates', icon: '📁' },
+  { name: 'settings', path: '/settings', icon: '⚙️' }
 ]
+
+function isActive(path: string) {
+  return route.path === path
+}
 </script>
 
 <template>
-  <nav class="navbar">
-    <div class="nav-brand">
-      <el-icon class="brand-icon"><Document /></el-icon>
-      <span class="brand-title">{{ t('app.title') }}</span>
+  <!-- Mobile hamburger -->
+  <button class="mobile-trigger" @click="sidebarOpen = !sidebarOpen">☰</button>
+
+  <!-- Mobile overlay -->
+  <div v-if="sidebarOpen" class="sidebar-overlay" @click="sidebarOpen = false"></div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" :class="{ open: sidebarOpen }">
+    <div class="sidebar-brand">
+      <div class="brand-logo">W</div>
+      <span class="brand-name">{{ t('app.title') }}</span>
     </div>
 
-    <div class="nav-links">
+    <nav class="sidebar-nav">
       <router-link
         v-for="item in navItems"
         :key="item.name"
         :to="item.path"
-        class="nav-link"
-        active-class="active"
+        class="nav-item"
+        :class="{ active: isActive(item.path) }"
+        @click="sidebarOpen = false"
       >
-        {{ t(`nav.${item.name}`) }}
+        <span class="nav-icon">{{ item.icon }}</span>
+        <span class="nav-label">{{ t(`nav.${item.name}`) }}</span>
       </router-link>
-    </div>
+    </nav>
 
-    <div class="nav-actions">
-      <button class="icon-btn" @click="settings.toggleTheme()">
-        <el-icon v-if="settings.theme === 'light'"><Sunny /></el-icon>
-        <el-icon v-else><Moon /></el-icon>
+    <div class="sidebar-footer">
+      <button class="theme-btn" @click="settings.toggleTheme()">
+        {{ settings.theme === 'light' ? '🌙' : '☀️' }}
       </button>
       <LangSwitch />
     </div>
-  </nav>
+  </aside>
 </template>
 
 <style scoped lang="scss">
-.navbar {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 32px;
-  height: 64px;
-  background: var(--bg-card);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
+.mobile-trigger {
+  display: none;
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 50;
+  background: $bg-card;
+  border: 1px solid $border;
+  border-radius: $radius-sm;
+  padding: 8px 14px;
+  font-size: 18px;
+  cursor: pointer;
+  box-shadow: $shadow;
+  color: $text;
 }
 
-.nav-brand {
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.25);
+  z-index: 45;
+}
+
+.sidebar {
+  width: $sidebar-w;
+  background: $bg-card;
+  border-right: 1px solid $border;
+  padding: 22px 16px;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 40;
+}
+
+.sidebar-brand {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-weight: 800;
-  font-size: 1.25rem;
-  color: var(--text);
-
-  .brand-icon {
-    font-size: 1.5rem;
-    color: var(--primary);
-  }
+  margin-bottom: 32px;
+  padding: 0 4px;
 }
 
-.nav-links {
+.brand-logo {
+  width: 36px; height: 36px;
+  border-radius: $radius-sm;
+  background: linear-gradient(135deg, $primary, $primary-light);
   display: flex;
-  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 800;
 }
 
-.nav-link {
-  padding: 8px 16px;
-  border-radius: var(--radius-sm);
-  color: var(--text-secondary);
+.brand-name {
+  font-size: 18px;
+  font-weight: 800;
+  color: $text;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: $radius-sm;
+  color: $text-secondary;
+  font-size: 14px;
   font-weight: 500;
-  transition: all 0.2s ease;
+  transition: all 0.15s;
 
   &:hover {
-    color: var(--primary);
-    background: var(--bg-soft);
-    text-decoration: none;
+    background: $primary-lighter;
+    color: $primary;
   }
 
   &.active {
-    color: var(--primary);
-    background: rgba(99, 102, 241, 0.1);
+    background: $primary-lighter;
+    color: $primary;
+    font-weight: 600;
   }
 }
 
-.nav-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+.nav-icon {
+  font-size: 16px;
+  width: 20px;
+  text-align: center;
 }
 
-.icon-btn {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: 1px solid var(--border);
-  background: var(--bg-soft);
-  color: var(--text);
+.sidebar-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 16px;
+  border-top: 1px solid $border;
+}
+
+.theme-btn {
+  width: 34px; height: 34px;
+  border-radius: $radius-sm;
+  border: 1px solid $border;
+  background: $bg;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
-
-  &:hover {
-    border-color: var(--primary);
-    color: var(--primary);
-  }
+  font-size: 16px;
 }
 
 @media (max-width: 768px) {
-  .navbar {
-    padding: 0 16px;
-  }
-
-  .nav-links {
-    display: none;
+  .mobile-trigger { display: block; }
+  .sidebar-overlay.open, .sidebar.open ~ .sidebar-overlay { display: block; }
+  .sidebar {
+    left: -240px;
+    transition: left 0.25s ease;
+    &.open { left: 0; }
   }
 }
 </style>

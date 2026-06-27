@@ -1,32 +1,26 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useRoute } from 'vue-router'
 import NavBar from '@/components/common/NavBar.vue'
-import FooterBar from '@/components/common/FooterBar.vue'
-import ParticleBackground from '@/components/common/ParticleBackground.vue'
-
-const route = useRoute()
-
-const showBackground = computed(() => route.name === 'home')
 </script>
 
 <template>
-  <ParticleBackground v-if="showBackground" />
   <NavBar />
-  <main class="main-content">
+  <div class="app-main">
     <router-view v-slot="{ Component }">
       <transition name="fade" mode="out-in">
         <component :is="Component" />
       </transition>
     </router-view>
-  </main>
-  <FooterBar />
+  </div>
 </template>
 
 <style scoped lang="scss">
-.main-content {
+.app-main {
+  margin-left: $sidebar-w;
   flex: 1;
-  position: relative;
-  z-index: 1;
+  min-height: 100vh;
+}
+
+@media (max-width: 768px) {
+  .app-main { margin-left: 0; padding-top: 52px; }
 }
 </style>

@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { useWasmEngine } from '@/composables/useWasmEngine'
 import { useTemplateStore } from './templateStore'
-import type { WeeklyReport, ReportSection } from '@/types/report'
+import type { WeeklyReport, ReportSection, ReportType } from '@/types/report'
 
 export const useReportStore = defineStore('report', () => {
   const { generateReport, scoreReport, extractKeywords } = useWasmEngine()
@@ -16,24 +16,34 @@ export const useReportStore = defineStore('report', () => {
   const reportText = computed(() => {
     if (!currentReport.value) return ''
     return currentReport.value.sections
+      .slice()
       .sort((a, b) => a.order - b.order)
       .map(s => `${s.title}\n\n${s.content}`)
       .join('\n\n')
   })
 
-  function setInput(text: string) {
-    inputText.value = text
-  }
+  function setInput(text: string) { inputText.value = text }
 
-  function getCurrentWeekRange(): string {
+  function getDateRange(): string {
     const now = new Date()
-    const day = now.getDay()
-    const diffToMonday = now.getDate() - day + (day === 0 ? -6 : 1)
-    const monday = new Date(now.setDate(diffToMonday))
-    const friday = new Date(monday)
-    friday.setDate(monday.getDate() + 4)
-    const fmt = (d: Date) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`
-    return `${fmt(monday)} - ${fmt(friday)}`
+    const type = templateStore.reportType
+
+    if (type === 'daily') {
+      return `${now.getFullYear()}.${String(now.getMonth() + 1).padStart(2, '0')}.${String(now.getDate()).padStart(2, '0')}`
+    }
+
+    if (type === 'weekly') {
+      const day = now.getDay()
+      const diffToMonday = now.getDate() - day + (day === 0 ? -6 : 1)
+      const monday = new Date(now.getFullYear(), now.getMonth(), diffToMonday)
+      const friday = new Date(monday)
+      friday.setDate(monday.getDate() + 4)
+      const fmt = (d: Date) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`
+      return `${fmt(monday)} - ${fmt(friday)}`
+    }
+
+    // monthly
+    return `${now.getFullYear()}.${String(now.getMonth() + 1).padStart(2, '0')}`
   }
 
   function generate() {
@@ -55,7 +65,8 @@ export const useReportStore = defineStore('report', () => {
       const templateJson = JSON.stringify({
         id: template.id,
         name: template.name,
-        sections: template.sections
+        sections: template.sections,
+        reportType: template.reportType
       })
 
       const resultJson = generateReport(inputText.value, templateJson)
@@ -63,6 +74,7 @@ export const useReportStore = defineStore('report', () => {
 
       const sections = result.sections || []
       const fullText = sections
+        .slice()
         .sort((a: ReportSection, b: ReportSection) => a.order - b.order)
         .map((s: ReportSection) => `${s.title}\n\n${s.content}`)
         .join('\n\n')
@@ -70,12 +82,12 @@ export const useReportStore = defineStore('report', () => {
       currentReport.value = {
         ...result,
         createdAt: new Date(),
-        dateRange: getCurrentWeekRange(),
+        dateRange: getDateRange(),
+        reportType: template.reportType,
         fullText,
         keywords: result.keywords || extractKeywords(inputText.value)
       }
 
-      // Update score based on full text
       if (currentReport.value) {
         currentReport.value.qualityScore = scoreReport(fullText)
       }
@@ -95,17 +107,14 @@ export const useReportStore = defineStore('report', () => {
   function loadReport(report: WeeklyReport) {
     currentReport.value = report
     inputText.value = report.rawInput
+    // Set template type to match
+    if (report.reportType) {
+      templateStore.setReportType(report.reportType)
+    }
+    if (report.templateId) {
+      templateStore.selectTemplate(report.templateId)
+    }
   }
 
-  return {
-    inputText,
-    currentReport,
-    isGenerating,
-    error,
-    reportText,
-    setInput,
-    generate,
-    clear,
-    loadReport
-  }
+  return { inputText, currentReport, isGenerating, error, reportText, setInput, generate, clear, loadReport }
 })

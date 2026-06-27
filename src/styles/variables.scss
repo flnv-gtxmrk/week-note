@@ -1,51 +1,103 @@
 :root {
-  --primary: #6366f1;
-  --primary-light: #818cf8;
-  --primary-dark: #4f46e5;
+  --primary: #7c3aed;
+  --primary-light: #a78bfa;
+  --primary-lighter: #ede9fe;
+  --primary-dark: #6d28d9;
   --accent: #f59e0b;
-  --success: #10b981;
+  --success: #059669;
+  --success-lt: #d1fae5;
+  --success-bg: #ecfdf5;
   --warning: #f59e0b;
+  --warning-bg: #fffbeb;
   --danger: #ef4444;
-  --text: #1f2937;
+  --danger-bg: #fef2f2;
+  --info: #3b82f6;
+  --info-lt: #dbeafe;
+  --pink: #ec4899;
+  --pink-lt: #fce7f3;
+
+  --text: #1a1a2e;
   --text-secondary: #6b7280;
-  --bg: #f8fafc;
-  --bg-soft: #f1f5f9;
-  --bg-card: rgba(255, 255, 255, 0.85);
-  --border: #e2e8f0;
-  --shadow: 0 8px 32px rgba(31, 41, 55, 0.08);
+  --text-tertiary: #9ca3af;
+
+  --bg: #f5f3f0;
+  --bg-soft: #edeae6;
+  --bg-card: #ffffff;
+  --bg-hover: #f9fafb;
+
+  --border: #e8e4de;
+  --border-light: #f0ece6;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -4px rgba(0, 0, 0, 0.03);
+
   --radius: 16px;
-  --radius-sm: 8px;
+  --radius-sm: 10px;
+  --radius-xs: 6px;
+  --radius-round: 20px;
+
   --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --sidebar-w: 220px;
 }
 
 [data-theme='dark'] {
-  --text: #f8fafc;
+  --text: #f1f5f9;
   --text-secondary: #94a3b8;
+  --text-tertiary: #64748b;
   --bg: #0f172a;
   --bg-soft: #1e293b;
-  --bg-card: rgba(30, 41, 59, 0.85);
+  --bg-card: #1e293b;
+  --bg-hover: #334155;
   --border: #334155;
-  --shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+  --border-light: #1e293b;
+  --primary-lighter: #312e81;
+  --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 8px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.5);
+  --success-bg: #064e3b;
+  --warning-bg: #78350f;
+  --danger-bg: #7f1d1d;
 }
 
 $primary: var(--primary);
-$accent: var(--accent);
+$primary-light: var(--primary-light);
+$primary-lighter: var(--primary-lighter);
 $success: var(--success);
+$success-lt: var(--success-lt);
+$accent: var(--accent);
 $text: var(--text);
 $text-secondary: var(--text-secondary);
+$text-tertiary: var(--text-tertiary);
 $bg: var(--bg);
 $bg-soft: var(--bg-soft);
 $bg-card: var(--bg-card);
+$bg-hover: var(--bg-hover);
 $border: var(--border);
+$shadow-sm: var(--shadow-sm);
 $shadow: var(--shadow);
+$shadow-md: var(--shadow-md);
+$shadow-lg: var(--shadow-lg);
 $radius: var(--radius);
 $radius-sm: var(--radius-sm);
+$radius-xs: var(--radius-xs);
+$radius-round: var(--radius-round);
 $font: var(--font);
+$sidebar-w: var(--sidebar-w);
+$primary-dark: var(--primary-dark);
+$danger: var(--danger);
+$danger-bg: var(--danger-bg);
+$warning: var(--warning);
+$warning-bg: var(--warning-bg);
+$info: var(--info);
+$info-lt: var(--info-lt);
+$pink: var(--pink);
+$pink-lt: var(--pink-lt);
 
-@mixin glass-card {
+@mixin card {
   background: $bg-card;
-  backdrop-filter: blur(12px);
-  border: 1px solid $border;
   border-radius: $radius;
   box-shadow: $shadow;
+  border: 1px solid $border;
 }

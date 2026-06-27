@@ -1,3 +1,5 @@
+export type ReportType = 'daily' | 'weekly' | 'monthly'
+
 export interface ReportSection {
   key: string
   title: string
@@ -8,13 +10,14 @@ export interface ReportSection {
 export interface WeeklyReport {
   id: string
   dateRange: string
-  createdAt: Date
+  createdAt: Date | string
   sections: ReportSection[]
   rawInput: string
   templateId: string
+  reportType: ReportType
   qualityScore?: number
   keywords: string[]
-  fullText: string
+  fullText?: string
 }
 
 export interface HistoryRecord {

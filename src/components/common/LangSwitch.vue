@@ -15,11 +15,11 @@ function switchLanguage(value: Locale) {
 <template>
   <div class="lang-switch">
     <button
-      v-for="l in ['zh-CN', 'en-US']"
+      v-for="l in (['zh-CN', 'en-US'] as Locale[])"
       :key="l"
       class="lang-btn"
       :class="{ active: locale === l }"
-      @click="switchLanguage(l as Locale)"
+      @click="switchLanguage(l)"
     >
       {{ l === 'zh-CN' ? '中' : 'EN' }}
     </button>
@@ -29,28 +29,21 @@ function switchLanguage(value: Locale) {
 <style scoped lang="scss">
 .lang-switch {
   display: flex;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  border-radius: $radius-xs;
   overflow: hidden;
-  background: var(--bg-soft);
+  background: $bg;
+  border: 1px solid $border;
 }
-
 .lang-btn {
-  padding: 6px 12px;
+  padding: 5px 10px;
   border: none;
   background: transparent;
-  color: var(--text-secondary);
+  color: $text-secondary;
   cursor: pointer;
+  font-size: 12px;
   font-weight: 600;
-  transition: all 0.2s ease;
-
-  &.active {
-    background: var(--primary);
-    color: white;
-  }
-
-  &:not(.active):hover {
-    color: var(--primary);
-  }
+  transition: all 0.15s;
+  &.active { background: $primary; color: #fff; }
+  &:not(.active):hover { color: $primary; }
 }
 </style>

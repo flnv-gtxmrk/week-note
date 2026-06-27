@@ -1,3 +1,5 @@
+import type { ReportType } from './report'
+
 export interface TemplateSection {
   key: string
   title: string
@@ -8,6 +10,8 @@ export interface TemplateSection {
   order: number
 }
 
+export type TemplateStyle = 'formal' | 'casual' | 'technical' | 'minimal' | 'creative'
+
 export interface ReportTemplate {
   id: string
   name: string
@@ -15,6 +19,9 @@ export interface ReportTemplate {
   description: string
   descriptionZh: string
   sections: TemplateSection[]
+  tags: string[]
+  style: TemplateStyle
+  reportType: ReportType      // daily / weekly / monthly
   isBuiltin: boolean
   isCustom: boolean
   createdAt?: number
